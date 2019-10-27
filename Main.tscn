@@ -53,9 +53,9 @@ margin_bottom = 20.0
 size_flags_horizontal = 7
 
 [node name="Progress" type="ProgressBar" parent="UI/L1/InputPart/VBox/bar/update"]
-margin_top = 2.0
+margin_top = 3.0
 margin_right = 164.0
-margin_bottom = 16.0
+margin_bottom = 17.0
 rect_min_size = Vector2( 164, 14 )
 size_flags_horizontal = 3
 size_flags_vertical = 4
@@ -68,17 +68,24 @@ margin_right = 332.0
 margin_bottom = 17.0
 size_flags_horizontal = 3
 
-[node name="update2" type="HBoxContainer" parent="UI/L1/InputPart/VBox/bar"]
+[node name="SimpleText" type="Button" parent="UI/L1/InputPart/VBox/bar"]
 margin_left = 336.0
 margin_right = 668.0
 margin_bottom = 20.0
-size_flags_horizontal = 7
+size_flags_horizontal = 3
+text = "simple text"
 
 [node name="update3" type="HBoxContainer" parent="UI/L1/InputPart/VBox/bar"]
 margin_left = 672.0
 margin_right = 1004.0
 margin_bottom = 20.0
 size_flags_horizontal = 7
+
+[node name="Compile" type="Button" parent="UI/L1/InputPart/VBox/bar/update3"]
+margin_right = 332.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "compile"
 
 [node name="input" type="TextEdit" parent="UI/L1/InputPart/VBox"]
 margin_top = 24.0
@@ -102,4 +109,6 @@ margin_top = 10.0
 margin_right = 1014.0
 margin_bottom = 288.0
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="pressed" from="UI/L1/InputPart/VBox/bar/SimpleText" to="." method="_on_SimpleText_pressed"]
+[connection signal="pressed" from="UI/L1/InputPart/VBox/bar/update3/Compile" to="." method="_on_Compile_pressed"]
 [connection signal="text_changed" from="UI/L1/InputPart/VBox/input" to="." method="_on_input_text_changed"]

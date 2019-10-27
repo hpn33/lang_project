@@ -9,10 +9,6 @@ onready var output = $UI/L1/OutputPart/output
 
 onready var timer = $Timer
 
-
-#var text := ''
-var array_text := []
-
 func _ready() -> void:
 	update_progress.max_value = timer.wait_time
 
@@ -27,8 +23,8 @@ func _process(delta: float) -> void:
 func _on_input_text_changed() -> void:
 	timer.start()
 
-func split_text(text: String):
-	array_text = []
+func split_text(text: String) -> Array:
+	var array_text := []
 	
 	var string := ''
 	var can_be_add = false
@@ -65,10 +61,14 @@ func split_text(text: String):
 			string = ''
 			can_be_add = false
 	
-#	print(array_text)
+	return array_text
+
+func lexer(input: String) -> void:
+	var array_text = split_text(input)
+	
 	parser(array_text)
 
-func parser(a_text: Array):
+func parser(a_text: Array) -> void:
 	print('/////////parser')
 	var can_go := true
 	var i := 0
@@ -105,4 +105,12 @@ func parser(a_text: Array):
 	output.text = out_text
 
 func _on_Timer_timeout() -> void:
-	split_text(input.text)
+	lexer(input.text)
+
+func _on_SimpleText_pressed() -> void:
+	input.text = """print 'hello world'"""
+	input.emit_signal("text_changed")
+
+
+func _on_Compile_pressed() -> void:
+	lexer(input.text)
