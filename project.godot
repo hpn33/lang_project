@@ -19,6 +19,10 @@ config/name="lang_project"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+u="*res://autoload/Util.gd"
+
 [rendering]
 
 quality/driver/driver_name="GLES2"
