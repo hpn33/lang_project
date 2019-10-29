@@ -13,6 +13,10 @@ onready var compile_time = $CompileTime
 
 func _ready() -> void:
 	update_progress.max_value = timer.wait_time
+	
+	input.add_keyword_color('print', Color.red)
+	input.add_keyword_color('var', Color.red)
+	
 
 func _process(delta: float) -> void:
 	update_label.text = str(timer.time_left)
@@ -30,6 +34,7 @@ func split_text(text: String) -> Array:
 	var array_text := []
 	
 	var letter_array := text_to_letter_array(text)
+	print(letter_array)
 	
 	
 	# way 1 pattern
@@ -57,6 +62,8 @@ func way1_lexer_pattern(letter_array: PoolStringArray):
 	var action := 'get_new_word'
 	var index := 0
 	var let := ''
+	var type := ''
+	var token := {}
 	
 	while can_read:
 		u.lexer_p('loop ' + action)
@@ -68,6 +75,9 @@ func way1_lexer_pattern(letter_array: PoolStringArray):
 				action = 'check_letter'
 			
 			'check_letter':
+				if let == '\n':
+					let = ' '
+				
 				if let in ['\'']:
 					u.lexer_p('is about string')
 					action = 'is_string'
@@ -86,7 +96,7 @@ func way1_lexer_pattern(letter_array: PoolStringArray):
 				is_string = !is_string
 				if not is_string:
 					can_add = true
-				u.lexer_p('is_string = ' + str(is_string))
+					u.lexer_p('is_string: ' + str(is_string))
 				
 				action = 'add_to_text'
 			
@@ -96,7 +106,7 @@ func way1_lexer_pattern(letter_array: PoolStringArray):
 			
 			'check_index':
 				if index == letter_array_size:
-					print('is end')
+					u.lexer_p('is end')
 					action = 'end'
 				else:
 					action = 'get_new_word'
@@ -107,29 +117,50 @@ func way1_lexer_pattern(letter_array: PoolStringArray):
 				action = 'check_text'
 			
 			'check_text':
-				if text in ['print']:
-					u.lexer_p('is print')
-					action = 'add_to_array'
+				if text in ['print', 'var']:
+					u.lexer_p('is keyword')
+					action = 'kayword_token'
 				elif can_add:
 					can_add = false
-					action = 'add_to_array'
+					action = 'string_token'
 				else:
 					u.lexer_p('not match to pattern')
 					action = 'next_index'
 				
 			
-			'add_to_array':
-				array_text.append(text)
+			'kayword_token':
+				token = {
+					type = 'kayword',
+					value = text
+				}
 				text = ''
+				
+				action = 'add_to_array'
+			
+			'string_token':
+				token = {
+					type = 'value',
+					value = text
+				}
+				
+				text = ''
+				
+				action = 'add_to_array'
+			
+			'add_to_array':
+				array_text.append(token)
+				
 				action = 'next_index'
 			
 			'end':
 				can_read = false
 	
 	for t in array_text:
-		u.lexer_p(t)
-	print(array_text)
+		u.lexer_p(str(t))
+	
 	return array_text
+
+
 
 func normal_lexer_pattern(letter_array: PoolStringArray) -> Array:
 	
@@ -173,8 +204,27 @@ func lexer(input: String) -> void:
 	
 	parser(array_text)
 
+
+
+
+
+
+
+
 func parser(a_text: Array) -> void:
 	u.parser('/////////parser')
+	
+	var out_text := ''
+	
+	out_text = way1_parser(a_text)
+	
+	
+	output.text = out_text
+	output.text += u.output
+	
+
+func normal_parser(a_text: Array) -> String:
+	
 	var can_go := true
 	var i := 0
 	var action := 'check_token'
@@ -205,11 +255,81 @@ func parser(a_text: Array) -> void:
 				action = 'check_token'
 				i+=1
 	
-	
-	
-	output.text = out_text
-	output.text += u.output
+	return out_text
 
+func way1_parser(array_token: Array) -> String:
+	
+	var can_go := true
+	var i := 0
+	var token := {}
+	var action := 'check_index'
+	var ready_action := ''
+	var value_holder 
+	
+	var out_text := ''
+	
+#	out_text += str(array_token) + '\n'
+	
+	while can_go:
+		
+#		print(action)
+		
+		match action:
+			'check_index':
+				if i == array_token.size():
+					action = 'end'
+				else:
+					action = 'get_token'
+			
+			'next_index':
+				i+=1 
+				
+				action = 'check_index'
+			
+			'get_token':
+				token = array_token[i]
+				
+				action = 'check_token'
+			
+			'check_token':
+				
+				if ready_action:
+					action = 'has_ready_action'
+				else:
+					action = 'need_to_action'
+				
+			
+			'has_ready_action':
+				
+				if ready_action == 'print':
+					ready_action = ''
+					action = 'do_print'
+			
+			'need_to_action':
+#				print(token)
+				if token.type == 'kayword':
+					if token.value == 'print':
+						action = 'get_next_token_for_print'
+					elif token.value == 'var':
+						action = 'next_index'
+			
+			'get_next_token_for_print':
+				
+				ready_action = 'print'
+				
+				action='next_index'
+			
+			'do_print':
+#				out_text += token + '\n'
+				
+				out_text += token.value + '\n'
+				
+				action = 'next_index'
+			
+			'end':
+				can_go = false
+	
+	return out_text
 
 func text_to_letter_array(text:String) -> PoolStringArray:
 	var letter_array := PoolStringArray()
@@ -228,6 +348,8 @@ func text_to_letter_array(text:String) -> PoolStringArray:
 func compiling():
 	compile_time.start()
 	
+	u.output = ''
+	
 	lexer(input.text)
 	
 	compile_time.stop()
@@ -238,7 +360,7 @@ func _on_Timer_timeout() -> void:
 	compiling()
 
 func _on_SimpleText_pressed() -> void:
-	input.text = """print 'hello world'"""
+	input.text = """print 'hello world'\nprint 'hello world'"""
 	input.emit_signal("text_changed")
 
 

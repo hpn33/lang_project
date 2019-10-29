@@ -2,7 +2,7 @@ extends Node
 
 var debug := true
 var levels := {
-	normal = false,
+	normal = true,
 	lexer = false,
 	lexer_p = false,
 	parser = true,
@@ -11,19 +11,21 @@ var levels := {
 
 var output := ''
 
-func p(text, level = 'normal'):
+func p(text:String, level := 'normal'):
 	
-	output += text + '\n'
-	
-	if debug and levels[level]:
-		print(text)
+	if levels[level]:
+		
+		output += text + '\n'
+		
+		if debug:
+			print(text)
 
-func info(text):
+func info(text:String):
 	p(text, 'info')
 
-func lexer_p(text):
+func lexer_p(text:String):
 	p(text, 'lexer_p')
 
-func parser(text):
+func parser(text:String):
 	p(text, 'parser')
 
