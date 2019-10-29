@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://CompileTime.gd" type="Script" id=2]
+[ext_resource path="res://lexer.gd" type="Script" id=3]
+[ext_resource path="res://parser.gd" type="Script" id=4]
+[ext_resource path="res://processor.gd" type="Script" id=5]
 
 [node name="Main" type="Node"]
 script = ExtResource( 1 )
@@ -16,10 +19,13 @@ script = ExtResource( 2 )
 
 [node name="processor" type="Node" parent="."]
 pause_mode = 1
+script = ExtResource( 5 )
 
 [node name="lexer" type="Node" parent="processor"]
+script = ExtResource( 3 )
 
 [node name="parser" type="Node" parent="processor"]
+script = ExtResource( 4 )
 
 [node name="UI" type="Control" parent="."]
 anchor_right = 1.0

@@ -29,3 +29,19 @@ func lexer_p(text:String):
 func parser(text:String):
 	p(text, 'parser')
 
+
+
+
+
+
+
+func text_to_letter_array(text:String) -> PoolStringArray:
+	var letter_array := PoolStringArray()
+	
+	for let in text:
+		letter_array.append(let)
+	
+	return letter_array
+
+
+
