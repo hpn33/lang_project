@@ -21,8 +21,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-logs="*res://autoload/LogSystem.gd"
 u="*res://autoload/Util.gd"
+grammer="*res://autoload/grammer.gd"
 
 [rendering]
 
