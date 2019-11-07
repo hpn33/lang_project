@@ -45,3 +45,17 @@ func text_to_letter_array(text:String) -> PoolStringArray:
 
 
 
+
+
+var keywords := ['print', 'var']
+var symbols := ['\'', '=', '\n']
+var white_space := ' '
+var words = keywords + symbols
+
+class Token:
+	var text
+	var type
+	
+	func _init(text, type = '') -> void:
+		self.text = text
+		self.type = type
